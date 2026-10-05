@@ -33,10 +33,10 @@
 
 ## UI 库选择
 
-- 选用 Radix 的 Dialog、ToggleGroup、Slot；用轻量自有包装组件保持 shadcn 风格的可组合 API。Radix 负责焦点、键盘和可访问行为。首版 registry 受连接配置影响；第二版已修复并通过官方 CLI 安装 Command、Sheet、Empty 与 Separator，保留原有基础 Dialog。新增组件均阅读源码后整合本地工具函数与语义令牌
+- 选用 Radix 的 Dialog、ToggleGroup、Slot；用轻量自有包装组件保持 shadcn 风格的可组合 API。Radix 负责焦点、键盘和可访问行为。首版 registry 受连接配置影响；第二版已修复并通过官方 CLI 安装 Card、Command、Sheet、Empty 与 Separator，保留原有基础 Dialog。新增组件均阅读源码后整合本地工具函数与语义令牌
 - Lucide 用于一致的细线图标
-- Magic UI 已研究，首版不引入额外的 marquee / particle / magic-card 效果，避免喧宾夺主
-- Motion 已研究，首版 CSS 状态过渡足够，不引入不必要运行时依赖
+- 第二版实际使用 Magic UI MagicCard，只给应用卡片加入低强度指针高光；不使用跑马灯、粒子、文字轮播等无关效果
+- Motion 仅随 MagicCard 引入，封装层尊重 reduced-motion；没有全页滚动或循环动画
 - Markdown 使用 unified / remark / rehype 的清洗管线，未启用可执行 MDX
 
 中文优先；所有可见文案集中在页面与少量配置中，可后续抽取字典。当前不声明已实现双语切换。

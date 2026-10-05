@@ -82,7 +82,7 @@ scripts/                    # 内容命令和本地预览
 .agents/skills/              # 内容协作技能
 ```
 
-技术栈：Next.js 16、React 19、TypeScript、Tailwind CSS 4、Radix Primitives、Lucide、unified/remark/rehype、Zod。精确安装版本以 package-lock.json 为准。第二版已通过官方 registry 安装并审阅 shadcn Command、Sheet、Empty、Separator；基础 Dialog 保留已有 Radix 包装。Magic UI 的视觉组件仍在按需评估，不混入无关效果。浏览器回归命令见 docs/ITERATION-2.md。
+技术栈：Next.js 16、React 19、TypeScript、Tailwind CSS 4、Radix Primitives、Lucide、unified/remark/rehype、Zod。精确安装版本以 package-lock.json 为准。第二版已通过官方 registry 安装并审阅 shadcn Command、Sheet、Empty、Separator；基础 Dialog 保留已有 Radix 包装。首页与应用空间使用 shadcn Card 和 Magic UI MagicCard；仅保留应用卡片的克制指针高光，并遵循减少动态效果偏好。浏览器回归命令见 docs/ITERATION-2.md。
 
 ## 验证
 

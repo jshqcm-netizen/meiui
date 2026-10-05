@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   BookOpen,
   FileText,
@@ -11,13 +12,24 @@ import {
   Compass,
 } from "lucide-react";
 import { getAllContent } from "@/lib/content";
-import { apps, formatDate } from "@/lib/site";
+import { apps, formatDate, site } from "@/lib/site";
 import { AppCard } from "@/components/app-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 export default async function Home() {
   const posts = await getAllContent("blog");
   const docs = await getAllContent("docs");
+  const sampleCount = [...posts, ...docs].filter(
+    (entry) => entry.sample,
+  ).length;
   const featured = posts.find((p) => p.featured) ?? posts[0];
   return (
     <div className="page home-page">
@@ -34,7 +46,7 @@ export default async function Home() {
         </div>
         <span className="edition-pill">
           <span />
-          本地预览版 <b>v0.1</b>
+          本地预览版 <b>v{site.version}</b>
         </span>
       </div>
       <div className="overview-grid">
@@ -61,47 +73,65 @@ export default async function Home() {
               </Link>
             </Button>
           </div>
-          <div className="hero-art" aria-hidden="true" />
+          <div className="hero-art" aria-hidden="true">
+            <Image
+              src="/media/cobalt-glass.webp"
+              alt=""
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 60vw"
+            />
+          </div>
           <span className="feature-corner">Ideas into things.</span>
         </section>
-        <section className="notebook-panel glass-panel">
-          <div className="section-card-heading">
-            <h2>空间一览</h2>
-            <Compass size={19} />
-          </div>
-          <p className="panel-subtitle">从一个想法，到一份积累</p>
-          <div className="notebook-stat">
-            <div className="stat-icon blue">
-              <BookOpen size={19} />
+        <Card className="notebook-panel">
+          <CardHeader>
+            <div className="section-card-heading">
+              <CardTitle>
+                <h2>空间一览</h2>
+              </CardTitle>
+              <Compass size={19} />
             </div>
-            <div>
-              技术手记<span>实验、思考与实践</span>
+            <CardDescription>从一个想法，到一份积累</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href="/blog/" className="notebook-stat">
+              <div className="stat-icon blue">
+                <BookOpen size={19} />
+              </div>
+              <div>
+                技术手记<span>实验、思考与实践</span>
+              </div>
+              <strong>{String(posts.length).padStart(2, "0")}</strong>
+            </Link>
+            <Link href="/docs/" className="notebook-stat">
+              <div className="stat-icon peach">
+                <FileText size={19} />
+              </div>
+              <div>
+                知识文档<span>可复用的步骤与方法</span>
+              </div>
+              <strong>{String(docs.length).padStart(2, "0")}</strong>
+            </Link>
+            <Link href="/apps/" className="notebook-stat">
+              <div className="stat-icon green">
+                <Layers3 size={19} />
+              </div>
+              <div>
+                应用规划<span>留给下一次构建</span>
+              </div>
+              <strong>{String(apps.length).padStart(2, "0")}</strong>
+            </Link>
+          </CardContent>
+          <CardFooter>
+            <div className="notebook-foot">
+              <span className="tiny-dot" />
+              {sampleCount
+                ? `${sampleCount} 篇示例内容，供结构与阅读演示`
+                : "阅读公开手记与文档"}
             </div>
-            <strong>{String(posts.length).padStart(2, "0")}</strong>
-          </div>
-          <div className="notebook-stat">
-            <div className="stat-icon peach">
-              <FileText size={19} />
-            </div>
-            <div>
-              知识文档<span>可复用的步骤与方法</span>
-            </div>
-            <strong>{String(docs.length).padStart(2, "0")}</strong>
-          </div>
-          <div className="notebook-stat">
-            <div className="stat-icon green">
-              <Layers3 size={19} />
-            </div>
-            <div>
-              应用规划<span>留给下一次构建</span>
-            </div>
-            <strong>{String(apps.length).padStart(2, "0")}</strong>
-          </div>
-          <div className="notebook-foot">
-            <span className="tiny-dot" />
-            当前内容为首版示例，可自由替换
-          </div>
-        </section>
+          </CardFooter>
+        </Card>
       </div>
       <section className="home-section">
         <div className="section-heading">

@@ -126,3 +126,8 @@ test("command search supports a named trigger and keyboard result selection", as
   await expect(page).toHaveURL(/\/docs\/media-guidelines\//);
   await expect(page.getByRole("dialog")).toBeHidden();
 });
+
+test("published sidebar topics contain results", async ({ page }) => {
+  await page.goto("/blog/?tag=建站");
+  await expect(page.locator(".article-card")).toHaveCount(1);
+});

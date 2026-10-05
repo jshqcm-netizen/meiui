@@ -26,12 +26,17 @@ import { SiteSearch } from "@/components/site-search";
 import type { SearchItem } from "@/lib/search";
 export type { SearchItem } from "@/lib/search";
 import { Button } from "@/components/ui/button";
-import { navItems } from "@/lib/site";
+import { navItems, site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 const icons = { home: Home, book: BookOpen, files: FileText, grid: Grid2X2 };
-function Brand() {
+function Brand({ onNavigate }: { onNavigate?: () => void }) {
   return (
-    <Link href="/" className="brand" aria-label="qcm.dev 首页">
+    <Link
+      href="/"
+      className="brand"
+      aria-label="qcm.dev 首页"
+      onClick={onNavigate}
+    >
       <span className="brand-mark" aria-hidden="true">
         q
       </span>
@@ -95,7 +100,7 @@ export function SiteShell({
             <span className="topic-dot blue" />
             AI 与智能体
           </Link>
-          <Link href="/blog/?tag=工程">
+          <Link href="/blog/?tag=建站">
             <span className="topic-dot peach" />
             开发与工程
           </Link>
@@ -147,7 +152,7 @@ export function SiteShell({
               >
                 <SheetHeader>
                   <div className="mobile-nav-top">
-                    <Brand />
+                    <Brand onNavigate={() => setMobile(false)} />
                     <SheetClose asChild>
                       <Button variant="ghost" size="icon" aria-label="关闭导航">
                         ×
@@ -193,7 +198,7 @@ export function SiteShell({
         <footer className="site-footer">
           <span>© 2026 qcm.dev</span>
           <span>记录探索，分享所知</span>
-          <span className="footer-version">Preview v0.1</span>
+          <span className="footer-version">Preview v{site.version}</span>
         </footer>
       </div>
     </div>
