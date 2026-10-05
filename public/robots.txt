@@ -1,0 +1,3 @@
+# Local preview only. Review before public deployment.
+User-agent: *
+Disallow: /
