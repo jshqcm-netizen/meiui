@@ -16,7 +16,10 @@
     "content:new": "node --import tsx scripts/content.ts new",
     "content:preview": "node --import tsx scripts/content.ts preview",
     "content:status": "node --import tsx scripts/content.ts status",
-    "check": "npm run content:check && npm run typecheck && npm run lint && npm test && npm run build"
+    "check": "npm run content:check && npm run typecheck && npm run lint && npm test && npm run build",
+    "test:ui": "playwright test",
+    "test:ui:list": "playwright test --list",
+    "check:export": "python3 scripts/check-export.py"
   },
   "engines": {
     "node": ">=22.0.0"
@@ -44,6 +47,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.6.4",
     "@types/react": "^19.3.0",
