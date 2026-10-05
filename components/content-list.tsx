@@ -1,21 +1,46 @@
 "use client";
-import Link from "next/link";
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { BookOpen, Clock3, Search, FileText, X } from "lucide-react";
+import { BookOpen, LayoutGrid, List, Search, X } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/lib/site";
-export type ContentSummary = {
-  slug: string;
-  kind: "blog" | "docs";
-  title: string;
-  description: string;
-  date: string;
-  tags: string[];
-  readingMinutes: number;
-  sample: boolean;
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { CollectionCards } from "@/components/collection-cards";
+import {
+  ALL_TOPICS,
+  collectionTopicHref,
+  collectionTopics,
+  selectCollection,
+  type CollectionSort,
+  type CollectionView,
+  type ContentSummary,
+} from "@/lib/collection";
+import styles from "./collection.module.css";
+export type { ContentSummary } from "@/lib/collection";
+
+const sortLabels: Record<CollectionSort, string> = {
+  newest: "最新发布",
+  oldest: "最早发布",
+  shortest: "阅读时间最短",
+  title: "标题顺序",
 };
+
 export function ContentList({
   entries,
   kind,
@@ -25,123 +50,183 @@ export function ContentList({
 }) {
   const params = useSearchParams();
   const router = useRouter();
-  const filter = params.get("tag") || "全部";
-  const setFilter = (tag: string) =>
-    router.replace(
-      `/${kind}/${tag === "全部" ? "" : `?tag=${encodeURIComponent(tag)}`}`,
-      { scroll: false },
-    );
+  const filter = params.get("tag") || ALL_TOPICS;
   const [query, setQuery] = useState("");
-  const tags = ["全部", ...new Set(entries.flatMap((e) => e.tags))];
-  const visible = entries.filter(
-    (e) =>
-      (filter === "全部" || e.tags.includes(filter)) &&
-      `${e.title} ${e.description} ${e.tags.join(" ")}`
-        .toLowerCase()
-        .includes(query.trim().toLowerCase()),
-  );
+  const [sort, setSort] = useState<CollectionSort>("newest");
+  const [view, setView] = useState<CollectionView>("grid");
+  const tags = collectionTopics(entries);
+  const visible = selectCollection(entries, { tag: filter, query, sort });
+  const hasFilters = filter !== ALL_TOPICS || Boolean(query.trim());
+  const label = kind === "blog" ? "技术手记" : "知识文档";
+  const setFilter = (tag: string) =>
+    router.replace(collectionTopicHref(kind, params.toString(), tag), {
+      scroll: false,
+    });
+  const resetFilters = () => {
+    setFilter(ALL_TOPICS);
+    setQuery("");
+  };
   return (
-    <>
-      <div className="collection-toolbar">
+    <section className={styles.explorer} aria-label={`${label}浏览器`}>
+      <div className={styles.explorerHeading}>
+        <div>
+          <h2>全部{label}</h2>
+          <p>
+            {kind === "blog"
+              ? "按兴趣找一篇，也可以从最新的开始。"
+              : "按主题查找，随时回来继续阅读。"}
+          </p>
+        </div>
+        <span className={styles.topicHint}>主题篇数按全部内容统计</span>
+      </div>
+      <div className={styles.controls}>
         <ToggleGroup
           type="single"
           value={filter}
-          onValueChange={(v: string) => {
-            if (v) setFilter(v);
+          onValueChange={(value: string) => {
+            if (value) setFilter(value);
           }}
-          className="filter-group"
+          className={styles.topicFilters}
           aria-label="按主题筛选"
         >
-          {tags.map((t) => (
-            <ToggleGroupItem key={t} value={t} aria-label={`筛选${t}`}>
-              {t}
+          {tags.map(({ tag, count }) => (
+            <ToggleGroupItem
+              key={tag}
+              value={tag}
+              aria-label={`筛选${tag}`}
+              aria-description={`${count} 篇${label}`}
+            >
+              {tag}
+              <span className={styles.topicCount} aria-hidden="true">
+                {count}
+              </span>
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
-        <div className="inline-search">
-          <Search size={17} />
-          <input
-            aria-label={kind === "blog" ? "搜索手记" : "搜索文档"}
-            placeholder={kind === "blog" ? "搜索手记" : "搜索文档"}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          {query && (
-            <button aria-label="清空搜索" onClick={() => setQuery("")}>
-              <X size={15} />
-            </button>
-          )}
-        </div>
-      </div>
-      <div className="collection-count" role="status">
-        {visible.length} 篇{kind === "blog" ? "技术手记" : "知识文档"}
-      </div>
-      <div className={kind === "blog" ? "article-grid" : "docs-grid"}>
-        {visible.map((entry, i) => (
-          <Link
-            key={entry.slug}
-            href={`/${kind}/${entry.slug}/`}
-            className={kind === "blog" ? "article-card" : "doc-card"}
-          >
-            {kind === "blog" ? (
-              <div
-                className={`article-cover cover-${i % 3}`}
-                aria-hidden="true"
+        <div className={styles.toolbar}>
+          <div className={styles.searchField}>
+            <Search aria-hidden="true" />
+            <Input
+              aria-label={kind === "blog" ? "搜索手记" : "搜索文档"}
+              placeholder="搜索标题、简介或主题"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+            {query && (
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="清空搜索"
+                onClick={() => setQuery("")}
               >
-                <div className="cover-code">
-                  {entry.tags.includes("AI")
-                    ? "prompt → draft → review"
-                    : entry.tags.includes("工程")
-                      ? "<build / learn / share>"
-                      : "notes.ideas.next()"}
-                </div>
-                <span className="cover-label">{entry.tags[0]}</span>
-                <span className="cover-symbol">
-                  {entry.tags.includes("AI") ? "✳" : "{ }"}
-                </span>
-              </div>
-            ) : (
-              <div className="doc-icon">
-                <FileText size={23} />
-              </div>
+                <X />
+              </Button>
             )}
-            <div className="article-card-body">
-              <div className="card-tags">
-                {entry.tags.slice(0, 2).map((t) => (
-                  <Badge key={t} variant="secondary">
-                    {t}
-                  </Badge>
-                ))}
-                {entry.sample && <span className="sample-label">示例内容</span>}
-              </div>
-              <h2>{entry.title}</h2>
-              <p>{entry.description}</p>
-              <div className="article-meta">
-                <span>{formatDate(entry.date)}</span>
-                <span>
-                  <Clock3 size={13} />
-                  {entry.readingMinutes} 分钟阅读
-                </span>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
-      {visible.length === 0 && (
-        <div className="collection-empty">
-          <BookOpen />
-          <h2>这里还没有相关内容</h2>
-          <p>试试其他主题，或清空搜索关键词</p>
-          <button
-            onClick={() => {
-              setFilter("全部");
-              setQuery("");
-            }}
-          >
-            查看全部内容
-          </button>
+          </div>
+          <div className={styles.viewControls}>
+            <Select
+              value={sort}
+              onValueChange={(value) => setSort(value as CollectionSort)}
+            >
+              <SelectTrigger
+                aria-label="内容排序"
+                className={styles.sortTrigger}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {Object.entries(sortLabels).map(([value, title]) => (
+                    <SelectItem key={value} value={value}>
+                      {title}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <ToggleGroup
+              type="single"
+              value={view}
+              onValueChange={(value: string) => {
+                if (value === "grid" || value === "list") setView(value);
+              }}
+              aria-label="内容视图"
+              className={styles.viewToggle}
+            >
+              <ToggleGroupItem
+                value="grid"
+                aria-label="网格视图"
+                title="网格视图"
+              >
+                <LayoutGrid />
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="list"
+                aria-label="列表视图"
+                title="列表视图"
+              >
+                <List />
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
         </div>
+      </div>
+      <div className={styles.resultBar}>
+        <p role="status" aria-live="polite" aria-atomic="true">
+          {hasFilters
+            ? `找到 ${visible.length} 篇，共 ${entries.length} 篇`
+            : `${visible.length} 篇${label}`}
+          {filter !== ALL_TOPICS && <span>主题：{filter}</span>}
+          {query.trim() && <span>关键词：{query.trim()}</span>}
+        </p>
+        {hasFilters ? (
+          <Button variant="ghost" size="sm" onClick={resetFilters}>
+            重置筛选
+            <X data-icon="inline-end" />
+          </Button>
+        ) : (
+          <span>
+            {kind === "docs" && view === "grid"
+              ? "按首个主题分组"
+              : sortLabels[sort]}
+          </span>
+        )}
+      </div>
+      {visible.length ? (
+        <CollectionCards
+          entries={visible}
+          kind={kind}
+          view={view}
+          grouped={kind === "docs" && filter === ALL_TOPICS}
+        />
+      ) : (
+        <Empty className={styles.empty}>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <BookOpen />
+            </EmptyMedia>
+            <EmptyTitle>
+              <h3>
+                {entries.length
+                  ? "这里还没有相关内容"
+                  : "这里的内容还在慢慢生长"}
+              </h3>
+            </EmptyTitle>
+            <EmptyDescription>
+              {entries.length
+                ? "换一个关键词，或清空筛选，看看其他主题。"
+                : "公开发布后，新的内容会出现在这里。"}
+            </EmptyDescription>
+          </EmptyHeader>
+          {entries.length > 0 && (
+            <EmptyContent>
+              <Button variant="outline" onClick={resetFilters}>
+                查看全部内容
+              </Button>
+            </EmptyContent>
+          )}
+        </Empty>
       )}
-    </>
+    </section>
   );
 }
