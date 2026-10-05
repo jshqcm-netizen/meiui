@@ -28,12 +28,14 @@ GitHub 仓库不包含依赖目录、构建缓存或 `out/`，克隆后请先执
 
 ## 已经实现
 
-- 响应式玻璃风格首页，移动端导航；中英文技术排版和本地字体
-- 博客与文档列表、主题筛选、搜索、空结果提示
+- 明暗两套磨砂玻璃主题，选择保存在本机；原创环境纹理、多层透光表面和移动端导航
+- 首页阅读书架 Tabs、精选手记、真实主题篇数；中英文技术排版和本地字体
+- 博客与文档列表、主题篇数、组合搜索、四种排序、网格/列表切换和空结果提示
+- 文档入门入口、按首主题分组，以及 SSR 初始内容链接
 - Cmd/Ctrl+K 全站搜索、方向键选择与中文输入保护；手机 Sheet 导航和 Radix 焦点管理
 - 独立文章/文档地址、可折叠完整目录、阅读时长、标签、相关文章、404
 - 代码语言标签、键盘滚动与点击复制；拒绝复制时给出明确提示
-- 3 个规划中应用的介绍页；不会将未上线的子域名冒充可用服务
+- 3 个规划中应用的介绍页、主站/子应用关系图和 Accordion 常见问题；链接均指向本站说明
 - 普通 Markdown / GFM：代码、表格、列表、图片；安全本地媒体与原生视频播放
 - 内容严格元数据校验、草稿隔离、本地预览、审核状态及显式批准门槛
 - 与阅读页一致的冷蓝色草稿审阅界面、修复本地附件链接、精确源文件 SHA-256 版本指纹
@@ -66,6 +68,7 @@ npm run content:status -- --kind blog --slug first-note --to published --approve
 - AI 技能：[qcm-content-authoring](.agents/skills/qcm-content-authoring/SKILL.md)
 - 设计与选型：[设计说明](docs/DESIGN.md)
 - 依赖/素材：[第三方声明](THIRD-PARTY-NOTICES.md)
+- 第三版变化：[玻璃工作台](docs/ITERATION-3.md)
 - 验证记录：[QA 报告](docs/QA.md)
 
 MDX/JSX/原始 HTML 和可执行 Frontmatter 均未开启。普通 Markdown 是首版的安全规范格式；Word/Notion 等内容需先转换和审核，不声称已经具备导入器。
@@ -84,7 +87,7 @@ scripts/                    # 内容命令和本地预览
 .agents/skills/              # 内容协作技能
 ```
 
-技术栈：Next.js 16、React 19、TypeScript、Tailwind CSS 4、Radix Primitives、Lucide、unified/remark/rehype、Zod。精确安装版本以 package-lock.json 为准。第二版已通过官方 registry 安装并审阅 shadcn Command、Sheet、Empty、Separator；基础 Dialog 保留已有 Radix 包装。首页与应用空间使用 shadcn Card 和 Magic UI MagicCard；仅保留应用卡片的克制指针高光，并遵循减少动态效果偏好。浏览器回归命令见 docs/ITERATION-2.md。
+技术栈：Next.js 16、React 19、TypeScript、Tailwind CSS 4、Radix Primitives、Lucide、unified/remark/rehype、Zod。精确安装版本以 package-lock.json 为准。已通过官方 registry 安装并审阅 shadcn Command、Sheet、Empty、Separator、Tabs、Accordion、Select、Input；基础 Dialog 保留已有 Radix 包装。首页与应用空间使用 shadcn Card 和 Magic UI MagicCard；仅保留应用卡片的克制指针高光，并遵循减少动态效果偏好。主题通过 next-themes 和 Radix ToggleGroup 控制。第三版说明见 docs/ITERATION-3.md。
 
 ## 验证
 
@@ -92,7 +95,7 @@ scripts/                    # 内容命令和本地预览
 npm run check
 ```
 
-可单独运行 `npm run typecheck`、`npm run lint`、`npm test`、`npm run content:check`。第二版共有 28 项单元测试。`npm run test:ui:list` 可检查浏览器测试发现，真正的浏览器验收需要执行 `npm run test:ui`；受限环境中不可把 list 的通过当成截图或交互通过。最后的静态文件验证见 `scripts/check-export.py`。
+可单独运行 `npm run typecheck`、`npm run lint`、`npm test`、`npm run content:check`。第三版共有 47 项单元测试。`npm run test:ui:list` 可检查浏览器测试发现，真正的浏览器验收需要执行 `npm run test:ui`；受限环境中不可把 list 的通过当成截图或交互通过。最后的静态文件验证见 `scripts/check-export.py`。
 
 ## Git 和下一阶段
 

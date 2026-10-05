@@ -13,7 +13,7 @@ Original application code is provided to the project owner without an assumed pu
 
 ## Component sources and researched libraries
 
-- shadcn/ui: MIT — https://github.com/shadcn-ui/ui/blob/main/LICENSE.md . Iteration 2 includes CLI-installed Card, Command, Sheet, Empty, Separator, Tabs, Accordion, Select and Input source, reviewed and adapted to local utilities/tokens. The upstream license is retained in licenses/shadcn-ui-LICENSE.md
+- shadcn/ui: MIT — https://github.com/shadcn-ui/ui/blob/main/LICENSE.md . The repository includes CLI-installed Card, Command, Sheet, Empty, Separator, Tabs, Accordion, Select and Input source, reviewed and adapted to local utilities/tokens. The upstream license is retained in licenses/shadcn-ui-LICENSE.md
 - Magic UI: MIT open-source core — https://github.com/magicuidesign/magicui/blob/main/LICENSE.md . CLI-installed MagicCard is used for a restrained app-card highlight, with a reduced-motion wrapper and adapted theme initialization; commercial Pro templates are separate
 - Motion: MIT open-source core — https://github.com/motiondivision/motion/blob/main/LICENSE.md . Motion powers the MagicCard interaction; Motion+ commercial assets are separate
 

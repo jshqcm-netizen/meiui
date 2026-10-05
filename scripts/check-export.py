@@ -31,3 +31,19 @@ for file in pages:
  if re.search(r'(sk-[A-Za-z0-9]{30,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN (RSA )?PRIVATE KEY-----)',html):errors.append(f'{file}: possible secret')
 assert not errors, '\n'.join(errors)
 print(f'PASS: {len(pages)} HTML pages, {link_count} local links/assets, {video_count} video embed(s); no missing local targets, anchors, or obvious secret patterns.')
+
+# Initial HTML remains useful before JavaScript loads; no planned subdomain is linked as a live app.
+for kind, card_class in [('blog', 'article-card'), ('docs', 'doc-card')]:
+ html=(root/kind/'index.html').read_text()
+ assert card_class in html, f'{kind}: missing server-rendered collection fallback'
+ parser=Page();parser.feed(html)
+ expected=[f'/{kind}/{file.stem}/' for file in Path('content',kind).glob('*.md') if 'status: published' in file.read_text()]
+ assert all(href in parser.links for href in expected), f'{kind}: public entries missing in initial HTML'
+for path in ['index.html','apps/index.html','blog/index.html','docs/index.html']:
+ html=(root/path).read_text()
+ assert '浅色主题' in html and '深色主题' in html, f'{path}: named theme controls missing'
+parser=Page();parser.feed((root/'apps/index.html').read_text())
+assert not any(urlsplit(link).hostname in ['ai.qcm.dev','agents.qcm.dev','admin.qcm.dev'] for link in parser.links), 'Planned domain linked as live'
+assert all(f'/apps/{slug}/' in parser.links for slug in ['ai','agents','admin']), 'Missing local planning destination'
+assert (root/'media/frosted-studio.webp').is_file(), 'Missing original glass backdrop'
+print('PASS: server-rendered collection destinations, named appearance controls, local-only app planning links, and backdrop asset.')

@@ -667,6 +667,9 @@ body::after {
   background: var(--secondary);
   color: var(--muted);
 }
+[data-slot="tabs-trigger"] {
+  color: var(--muted);
+}
 [data-slot="tabs-trigger"][data-state="active"] {
   background: var(--panel-solid);
   color: var(--foreground);
@@ -851,4 +854,10 @@ body::after {
   .topbar-actions {
     gap: 4px;
   }
+}
+
+/* Both foreground and background are explicit for selected text in either theme. */
+::selection {
+  background: var(--surface-selected);
+  color: var(--foreground);
 }

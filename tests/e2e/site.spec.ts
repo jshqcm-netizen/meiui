@@ -44,7 +44,7 @@ test("topic filter, no results, clear and browser history", async ({
   page,
 }) => {
   await page.goto("/blog/");
-  await page.getByRole("button", { name: "筛选AI", exact: true }).click();
+  await page.getByRole("radio", { name: "筛选AI", exact: true }).click();
   await expect(page).toHaveURL(/tag=AI/);
   const input = page.getByLabel("搜索手记");
   await input.fill("no-such-entry-2371");
@@ -148,4 +148,48 @@ test("reading controls retain every heading and expose keyboard-scrollable code"
   await expect(
     page.getByRole("button", { name: "复制第 1 段代码" }),
   ).toBeVisible();
+});
+
+
+test("appearance is selectable, persists locally and supports dark reading", async ({ page }, testInfo) => {
+  await page.goto("/");
+  await page.getByRole("radio", { name: "深色主题", exact: true }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.getByRole("radio", { name: "深色主题" })).toBeChecked();
+  await page.screenshot({ path: testInfo.outputPath("home-dark.png"), fullPage: true });
+  await page.goto("/docs/getting-started/");
+  await expect(page.locator(".reading-surface")).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.getByRole("radio", { name: "浅色主题", exact: true }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+});
+
+test("collection view and sort controls retain all public entries", async ({ page }) => {
+  await page.goto("/blog/");
+  await page.getByRole("radio", { name: "列表视图", exact: true }).click();
+  await expect(page.locator('[data-view="list"] .article-card')).toHaveCount(3);
+  await page.getByRole("combobox", { name: "内容排序", exact: true }).click();
+  await page.getByRole("option", { name: "阅读时间最短", exact: true }).click();
+  await expect(page.getByRole("combobox", { name: "内容排序" })).toContainText("阅读时间最短");
+  await expect(page.locator(".article-card")).toHaveCount(3);
+  await page.getByRole("radio", { name: "网格视图", exact: true }).click();
+  await expect(page.locator('[data-view="grid"] .article-card')).toHaveCount(3);
+});
+
+test("home library and application accordions expose real local destinations", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("tab", { name: /文档，3 篇/ }).click();
+  const panel = page.getByRole("tabpanel");
+  await expect(panel.getByRole("link", { name: /查看全部文档/ })).toHaveAttribute("href", "/docs/");
+  await panel.getByRole("link", { name: /查看全部文档/ }).click();
+  await expect(page).toHaveURL(/\/docs\//);
+  await page.goto("/apps/");
+  const domainMap = page.getByRole("navigation", { name: "主站与规划子应用的关系" });
+  await expect(domainMap.getByRole("link")).toHaveCount(4);
+  const hrefs = await domainMap.getByRole("link").evaluateAll((links) => links.map((link) => link.getAttribute("href")));
+  expect(hrefs.every((href) => href?.startsWith("/") && !href.startsWith("//"))).toBe(true);
+  await page.getByRole("button", { name: "需要登录或提供数据吗？", exact: true }).click();
+  await expect(page.getByText("阅读主站内容无需登录。", { exact: false })).toBeVisible();
 });
