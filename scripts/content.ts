@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stringify } from 'yaml';
 import { isContentSlug, loadAllContent, parseContentSource, validateContentSource } from '../lib/content';
+import { createContentPreview } from '../lib/content-preview';
 import type { ContentKind, ContentMetadata, ContentStatus } from '../lib/content-types';
 
 const HELP = `QCM local content workflow
@@ -46,9 +47,6 @@ function target(options: Options): { kind: ContentKind; slug: string; filename: 
 function serialize(metadata: ContentMetadata, body: string): string {
   return `---\n${stringify(metadata, { lineWidth: 0 }).trim()}\n---\n\n${body.trim()}\n`;
 }
-function escapeHtml(value: string): string {
-  return value.replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]!);
-}
 async function checkTargetContainment(filename: string, mustExist: boolean): Promise<void> {
   const root = await realpath(path.join(process.cwd(), 'content'));
   const directory = await realpath(path.dirname(filename));
@@ -82,19 +80,16 @@ export async function runContentCli(args: string[]): Promise<void> {
     const options = parseArgs(rest, ['kind', 'slug']);
     const { kind, slug, filename } = target(options);
     await checkTargetContainment(filename, true);
-    const entry = await validateContentSource(await readFile(filename, 'utf8'), { expectedKind: kind, expectedSlug: slug, sourceName: filename });
+    const { entry, html, sourceHash } = await createContentPreview(await readFile(filename, 'utf8'), { expectedKind: kind, expectedSlug: slug, sourceName: filename });
     const previewDir = path.join(process.cwd(), '.content-preview');
     await mkdir(previewDir, { recursive: true });
     if (await realpath(previewDir) !== path.resolve(previewDir)) throw new Error('Preview directory must not be a symlink');
     const output = path.join(previewDir, `${kind}-${slug}.html`);
     // The preview lives outside public/ and out/. It is never part of the site export.
-    const html = entry.html.replace(/src="\/media\//g, 'src="../public/media/');
-    const previewUrl = (url: string): string => escapeHtml(url.replace(/^\/media\//, '../public/media/'));
-    const videos = (entry.videos ?? []).map((video) => `<figure><h2>${escapeHtml(video.title)}</h2><video controls preload="metadata" aria-label="${escapeHtml(video.title)}"${video.poster ? ` poster="${previewUrl(video.poster)}"` : ''}><source src="${previewUrl(video.src)}" type="${video.src.toLowerCase().endsWith('.webm') ? 'video/webm' : 'video/mp4'}">${video.captions ? `<track kind="captions" src="${previewUrl(video.captions)}" srclang="zh-CN" label="中文字幕">` : ''}你的浏览器不支持此视频。</video><figcaption>${escapeHtml(video.caption)}</figcaption></figure>`).join('');
     const temporary = `${output}.${process.pid}.tmp`;
-    await writeFile(temporary, `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' file:; media-src 'self' file:; style-src 'unsafe-inline'"><meta name="robots" content="noindex,nofollow"><title>${escapeHtml(entry.title)} · 本地预览</title><style>body{max-width:760px;margin:3rem auto;padding:0 1.25rem;font:17px/1.85 system-ui,sans-serif;color:#25261f;background:#faf9f4}aside{padding:1rem;background:#eef0e5}h1,h2,h3{line-height:1.35}pre{overflow:auto;padding:1rem;background:#eeeee7}img,video{max-width:100%;height:auto}figure{margin:2rem 0}figcaption{color:#59624e;font-size:.9rem}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:.5rem;text-align:left}a{color:#466b35}</style></head><body><aside>本地预览 · ${escapeHtml(entry.status)} · ${entry.readingMinutes} 分钟<br>预览文件不会进入站点导出。链接和媒体仍需人工检查。</aside><h1>${escapeHtml(entry.title)}</h1><p>${escapeHtml(entry.description)}</p>${html}${videos}</body></html>`, { encoding: 'utf8', flag: 'wx' });
+    await writeFile(temporary, html, { encoding: 'utf8', flag: 'wx' });
     await rename(temporary, output);
-    console.log(`Validated ${entry.status}: content/${kind}/${slug}.md\nLocal preview: ${output}`);
+    console.log(`Validated ${entry.status}: content/${kind}/${slug}.md\nLocal preview: ${output}\nSource SHA-256: ${sourceHash}\nReview this exact version; publication needs separate approval.`);
     return;
   }
   if (command === 'status') {
