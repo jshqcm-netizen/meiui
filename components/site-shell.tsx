@@ -1,40 +1,33 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   BookOpen,
-  Command,
   FileText,
   Grid2X2,
   Home,
   Menu,
-  Search,
   Code2,
   Sparkles,
-  X,
   CircleHelp,
 } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
+import { SiteSearch } from "@/components/site-search";
+import type { SearchItem } from "@/lib/search";
+export type { SearchItem } from "@/lib/search";
 import { Button } from "@/components/ui/button";
 import { navItems } from "@/lib/site";
 import { cn } from "@/lib/utils";
-export type SearchItem = {
-  title: string;
-  description: string;
-  href: string;
-  tags: string[];
-  kind: string;
-  text?: string;
-};
 const icons = { home: Home, book: BookOpen, files: FileText, grid: Grid2X2 };
 function Brand() {
   return (
@@ -81,32 +74,10 @@ export function SiteShell({
   searchItems: SearchItem[];
 }) {
   const path = usePathname();
-  const [open, setOpen] = useState(false);
   const [mobile, setMobile] = useState(false);
-  const [query, setQuery] = useState("");
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        setOpen((x) => !x);
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
   const current =
     navItems.find((n) => n.href !== "/" && path.startsWith(n.href))?.label ??
     "总览";
-  const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
-  const results = searchItems
-    .filter((item) =>
-      terms.every((term) =>
-        `${item.title} ${item.description} ${item.tags.join(" ")} ${item.text ?? ""}`
-          .toLocaleLowerCase()
-          .includes(term),
-      ),
-    )
-    .slice(0, 8);
   return (
     <div className="workspace">
       <a className="skip-link" href="#main-content">
@@ -158,8 +129,8 @@ export function SiteShell({
       <div className="main-column">
         <header className="topbar">
           <div className="breadcrumb">
-            <Dialog open={mobile} onOpenChange={setMobile}>
-              <DialogTrigger asChild>
+            <Sheet open={mobile} onOpenChange={setMobile}>
+              <SheetTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -168,111 +139,48 @@ export function SiteShell({
                 >
                   <Menu />
                 </Button>
-              </DialogTrigger>
-              <DialogContent className="mobile-nav-dialog">
-                <DialogHeader>
-                  <DialogTitle>qcm.dev 导航</DialogTitle>
-                  <DialogDescription>
-                    探索技术手记、文档与应用
-                  </DialogDescription>
-                </DialogHeader>
+              </SheetTrigger>
+              <SheetContent
+                side="left"
+                className="mobile-nav-sheet"
+                showCloseButton={false}
+              >
+                <SheetHeader>
+                  <div className="mobile-nav-top">
+                    <Brand />
+                    <SheetClose asChild>
+                      <Button variant="ghost" size="icon" aria-label="关闭导航">
+                        ×
+                      </Button>
+                    </SheetClose>
+                  </div>
+                  <SheetTitle className="sr-only">qcm.dev 导航</SheetTitle>
+                  <SheetDescription>
+                    从一个想法，走向下一次构建
+                  </SheetDescription>
+                </SheetHeader>
                 <Navigation onNavigate={() => setMobile(false)} />
-              </DialogContent>
-            </Dialog>
+                <Separator />
+                <Link
+                  className="mobile-guide-link"
+                  href="/docs/getting-started/"
+                  onClick={() => setMobile(false)}
+                >
+                  <CircleHelp size={18} />
+                  从这里开始
+                </Link>
+                <p className="mobile-nav-foot">
+                  技术手记 · 知识文档 · 应用空间
+                </p>
+              </SheetContent>
+            </Sheet>
             <span className="breadcrumb-home">Workspace</span>
             <span className="breadcrumb-slash">/</span>
             <span>{current}</span>
           </div>
           <div className="topbar-actions">
-            <Dialog
-              open={open}
-              onOpenChange={(value) => {
-                setOpen(value);
-                if (!value) setQuery("");
-              }}
-            >
-              <DialogTrigger asChild>
-                <button className="search-trigger">
-                  <Search size={16} />
-                  <span>搜索内容...</span>
-                  <kbd>⌘ K</kbd>
-                </button>
-              </DialogTrigger>
-              <DialogContent className="search-dialog" showCloseButton={false}>
-                <DialogHeader>
-                  <DialogTitle>搜索这个空间</DialogTitle>
-                  <DialogDescription>
-                    查找技术手记、知识文档和应用
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="search-input-wrap">
-                  <Search size={19} />
-                  <input
-                    aria-label="搜索关键词"
-                    autoFocus
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="试试 Markdown、AI、工程…"
-                  />
-                  <DialogClose asChild>
-                    <Button variant="ghost" size="icon" aria-label="关闭搜索">
-                      <X />
-                    </Button>
-                  </DialogClose>
-                </div>
-                <div className="search-results" aria-live="polite">
-                  <p className="search-hint">
-                    {query ? `找到 ${results.length} 条结果` : "从这里开始"}
-                  </p>
-                  {results.map((item) => (
-                    <Link
-                      href={item.href}
-                      key={item.href}
-                      className="search-result"
-                      onClick={() => {
-                        setOpen(false);
-                        setQuery("");
-                      }}
-                    >
-                      <span className="search-result-icon">
-                        {item.kind === "docs" ? (
-                          <FileText />
-                        ) : item.kind === "app" ? (
-                          <Grid2X2 />
-                        ) : (
-                          <BookOpen />
-                        )}
-                      </span>
-                      <span>
-                        <strong>{item.title}</strong>
-                        <small>{item.description}</small>
-                      </span>
-                      <span className="search-kind">
-                        {item.kind === "docs"
-                          ? "文档"
-                          : item.kind === "app"
-                            ? "应用"
-                            : "手记"}
-                      </span>
-                    </Link>
-                  ))}
-                  {results.length === 0 && (
-                    <div className="search-empty">
-                      <Search />
-                      <strong>还没有相关内容</strong>
-                      <span>换一个关键词，或尝试 “Markdown”</span>
-                    </div>
-                  )}
-                </div>
-                <div className="search-footer">
-                  <span>
-                    <Command size={13} /> K 打开搜索
-                  </span>
-                  <span>Esc 关闭</span>
-                </div>
-              </DialogContent>
-            </Dialog>
-            <span className="topbar-divider" />
+            <SiteSearch items={searchItems} />
+            <Separator orientation="vertical" className="topbar-divider" />
             <span className="topbar-caption">Build something meaningful.</span>
             <span className="top-avatar" aria-hidden="true">
               Q

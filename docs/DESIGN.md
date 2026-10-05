@@ -33,7 +33,7 @@
 
 ## UI 库选择
 
-- 选用 Radix 的 Dialog、ToggleGroup、Slot；用轻量自有包装组件保持 shadcn 风格的可组合 API。Radix 负责焦点、键盘和可访问行为。已研究 shadcn 官方文档并尝试 CLI，但当前环境访问其 registry 失败；首版没有冒充成功安装的 shadcn 源文件
+- 选用 Radix 的 Dialog、ToggleGroup、Slot；用轻量自有包装组件保持 shadcn 风格的可组合 API。Radix 负责焦点、键盘和可访问行为。首版 registry 受连接配置影响；第二版已修复并通过官方 CLI 安装 Command、Sheet、Empty 与 Separator，保留原有基础 Dialog。新增组件均阅读源码后整合本地工具函数与语义令牌
 - Lucide 用于一致的细线图标
 - Magic UI 已研究，首版不引入额外的 marquee / particle / magic-card 效果，避免喧宾夺主
 - Motion 已研究，首版 CSS 状态过渡足够，不引入不必要运行时依赖

@@ -11,9 +11,9 @@ Original application code is provided to the project owner without an assumed pu
 - unified, remark and rehype family: MIT — respective upstream package repositories and included LICENSE files
 - gray-matter, YAML, Zod, clsx, tailwind-merge, class-variance-authority: MIT — respective upstream package repositories and included license files
 
-## Researched libraries
+## Component sources and researched libraries
 
-- shadcn/ui: MIT — https://github.com/shadcn-ui/ui/blob/main/LICENSE.md . Registry installation was attempted but the environment could not connect; no copied upstream component source is represented as installed. The CLI remains available as a development dependency
+- shadcn/ui: MIT — https://github.com/shadcn-ui/ui/blob/main/LICENSE.md . Iteration 2 includes CLI-installed Command, Sheet, Empty and Separator source, reviewed and adapted to local utilities/tokens. The upstream license is retained in licenses/shadcn-ui-LICENSE.md
 - Magic UI: MIT open-source core — https://github.com/magicuidesign/magicui/blob/main/LICENSE.md . Not used in runtime; commercial Pro templates are separate
 - Motion: MIT open-source core — https://github.com/motiondivision/motion/blob/main/LICENSE.md . Not used in runtime; Motion+ commercial assets are separate
 

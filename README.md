@@ -30,7 +30,7 @@ GitHub 仓库不包含依赖目录、构建缓存或 `out/`，克隆后请先执
 
 - 响应式玻璃风格首页，移动端导航；中英文技术排版和本地字体
 - 博客与文档列表、主题筛选、搜索、空结果提示
-- Cmd/Ctrl+K 全站搜索；可关闭对话框、Radix 焦点管理
+- Cmd/Ctrl+K 全站搜索、方向键选择与中文输入保护；手机 Sheet 导航和 Radix 焦点管理
 - 独立文章/文档地址、自动目录、阅读时长、标签、相关文章、404
 - 3 个规划中应用的介绍页；不会将未上线的子域名冒充可用服务
 - 普通 Markdown / GFM：代码、表格、列表、图片；安全本地媒体与原生视频播放
@@ -82,7 +82,7 @@ scripts/                    # 内容命令和本地预览
 .agents/skills/              # 内容协作技能
 ```
 
-技术栈：Next.js 16、React 19、TypeScript、Tailwind CSS 4、Radix Primitives、Lucide、unified/remark/rehype、Zod。精确安装版本以 package-lock.json 为准。视觉参考了 shadcn 和 Magic UI 的组件思路，但没有依赖 Magic UI 的动画；shadcn registry 在构建环境不可达，交付使用自行编写的 Radix 包装，未把失败安装说成成功。
+技术栈：Next.js 16、React 19、TypeScript、Tailwind CSS 4、Radix Primitives、Lucide、unified/remark/rehype、Zod。精确安装版本以 package-lock.json 为准。第二版已通过官方 registry 安装并审阅 shadcn Command、Sheet、Empty、Separator；基础 Dialog 保留已有 Radix 包装。Magic UI 的视觉组件仍在按需评估，不混入无关效果。浏览器回归命令见 docs/ITERATION-2.md。
 
 ## 验证
 

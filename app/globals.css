@@ -2931,3 +2931,238 @@ main:focus {
   margin-top: 10px;
   line-height: 1.8;
 }
+
+/* Iteration 2: navigation controls share a legible, glass-surface interaction language. */
+:root {
+  --surface-command: #f8fbff;
+  --surface-selected: #e4ecfc;
+  --focus-ring: #6681db;
+}
+.search-trigger {
+  min-height: 40px;
+  border: 1px solid #d4deed;
+  background: #f7faff90;
+  border-radius: 13px;
+  padding: 0 12px;
+  color: #596f94;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.search-trigger:hover {
+  border-color: #afc1e3;
+  background: #ffffffb0;
+}
+.search-trigger kbd {
+  margin-left: 28px;
+  padding: 2px 5px;
+  background: #fff8;
+  font-size: 11px;
+}
+.command-dialog {
+  --card: var(--surface-command);
+  width: min(650px, calc(100% - 28px));
+  max-height: 85dvh;
+  overflow: hidden !important;
+  gap: 14px !important;
+}
+.search-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.search-title-row .ui-button {
+  flex-shrink: 0;
+  height: 44px;
+  width: 44px;
+}
+.command-dialog [data-slot="command"] {
+  background: transparent;
+  min-height: 0;
+  flex: 1;
+}
+.command-dialog [data-slot="command-input-wrapper"] {
+  border: 1px solid var(--border);
+  background: var(--secondary);
+  border-radius: 13px;
+  height: 50px;
+  gap: 11px;
+  padding: 0 15px;
+  flex-shrink: 0;
+}
+.command-dialog [data-slot="command-input-wrapper"]:focus-within {
+  outline: 3px solid #6681db40;
+  border-color: var(--focus-ring);
+}
+.command-dialog [data-slot="command-input"] {
+  height: 48px;
+  font-size: 15px;
+  outline: none;
+}
+.command-dialog .search-hint {
+  margin: 14px 3px 7px;
+  font-size: 12px;
+}
+.command-dialog [data-slot="command-list"] {
+  max-height: min(45dvh, 400px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  overscroll-behavior: contain;
+  padding: 0 1px 7px;
+}
+.command-dialog [cmdk-group-heading] {
+  font-size: 12px;
+  padding: 12px 9px 7px;
+  color: var(--muted);
+}
+.command-dialog [data-slot="command-item"] {
+  padding: 11px 9px;
+  gap: 11px;
+  border-radius: 12px;
+  min-height: 65px;
+  cursor: pointer;
+  scroll-margin-block: 10px;
+}
+.command-dialog [data-slot="command-item"][data-selected="true"] {
+  background: var(--surface-selected);
+  outline: 1px solid #cbd9f3;
+  outline-offset: -1px;
+}
+.command-result-copy {
+  flex: 1;
+  min-width: 0;
+}
+.command-result-copy strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.command-result-copy small {
+  display: block;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+.command-result-kind {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.command-dialog [data-slot="empty"] {
+  padding: 28px 16px;
+}
+.search-footer kbd {
+  min-width: 19px;
+  height: 20px;
+  border: 1px solid var(--border);
+  background: #fff8;
+  border-radius: 4px;
+  display: inline-grid;
+  place-items: center;
+  font-family: inherit;
+  font-size: 11px;
+}
+.search-footer {
+  padding-top: 13px;
+  font-size: 12px;
+}
+.mobile-nav-sheet {
+  --background: #edf3fc;
+  width: min(88vw, 345px);
+  padding: max(24px, env(safe-area-inset-top)) 20px
+    max(24px, env(safe-area-inset-bottom));
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 0 25px 25px 0;
+  border-right-color: #fff;
+  gap: 22px;
+  box-shadow: 15px 0 80px #1e34562b;
+}
+.mobile-nav-sheet [data-slot="sheet-header"] {
+  padding: 0;
+  gap: 20px;
+}
+.mobile-nav-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.mobile-nav-top .brand {
+  padding: 0;
+}
+.mobile-nav-top .ui-button {
+  width: 44px;
+  height: 44px;
+  font-size: 25px;
+}
+.mobile-nav-sheet [data-slot="sheet-description"] {
+  font-size: 13px;
+  padding-left: 2px;
+}
+.mobile-nav-sheet .nav-link {
+  font-size: 15px;
+  min-height: 49px;
+  padding: 14px;
+}
+.mobile-guide-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 14px;
+  color: #5c7297;
+  font-size: 14px;
+}
+.mobile-nav-foot {
+  margin-top: auto;
+  padding: 20px 13px 0;
+  color: #6b7c96;
+  font-size: 12px;
+}
+@media (max-width: 760px) {
+  .search-trigger {
+    height: 44px;
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 14px;
+    background: #f9fbff80;
+  }
+  .mobile-menu {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .topbar {
+    padding-left: 12px;
+    padding-right: 10px;
+    height: 60px;
+  }
+  .command-dialog {
+    max-height: 88dvh;
+    padding: 18px !important;
+  }
+  .command-dialog [data-slot="command-input"] {
+    font-size: 16px;
+  }
+  .command-result-copy strong {
+    font-size: 13px;
+  }
+  .command-result-copy small {
+    font-size: 12px;
+  }
+  .command-result-kind {
+    display: none;
+  }
+  .search-footer {
+    font-size: 11px;
+  }
+}
