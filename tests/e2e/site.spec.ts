@@ -131,3 +131,21 @@ test("published sidebar topics contain results", async ({ page }) => {
   await page.goto("/blog/?tag=建站");
   await expect(page.locator(".article-card")).toHaveCount(1);
 });
+
+test("reading controls retain every heading and expose keyboard-scrollable code", async ({
+  page,
+}) => {
+  await page.goto("/docs/publishing-content/");
+  const toc = page.locator(".article-toc");
+  await expect(toc).toBeVisible();
+  await toc.locator("summary").click();
+  await expect(toc.locator("nav")).toBeHidden();
+  await toc.locator("summary").click();
+  await expect(toc.locator("nav")).toBeVisible();
+  const pre = page.locator(".code-frame pre").first();
+  await expect(pre).toHaveAttribute("tabindex", "0");
+  await expect(pre).toHaveAttribute("role", "region");
+  await expect(
+    page.getByRole("button", { name: "复制第 1 段代码" }),
+  ).toBeVisible();
+});
