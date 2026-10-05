@@ -2,9 +2,21 @@
 import { useReducedMotion } from "motion/react";
 import { MagicCard } from "@/components/ui/magic-card";
 const tones = {
-  blue: { from: "#94b5f4", to: "#dae8ff", glow: "#dceaff" },
-  peach: { from: "#d6b2a5", to: "#f1e0d7", glow: "#f9e7dc" },
-  green: { from: "#9fc9bf", to: "#d6ebe3", glow: "#d9eee5" },
+  blue: {
+    from: "var(--tone-blue-ink)",
+    to: "var(--tone-blue)",
+    glow: "var(--highlight-blue)",
+  },
+  peach: {
+    from: "var(--tone-peach-ink)",
+    to: "var(--tone-peach)",
+    glow: "var(--highlight-peach)",
+  },
+  green: {
+    from: "var(--tone-green-ink)",
+    to: "var(--tone-green)",
+    glow: "var(--highlight-green)",
+  },
 };
 /** A restrained pointer-responsive surface. No animation or data is essential to the content. */
 export function AppGlass({
@@ -20,8 +32,8 @@ export function AppGlass({
     <MagicCard
       className="app-glass"
       gradientSize={260}
-      gradientFrom={reduced ? "#d7deed" : colors.from}
-      gradientTo={reduced ? "#d7deed" : colors.to}
+      gradientFrom={reduced ? "var(--border)" : colors.from}
+      gradientTo={reduced ? "var(--border)" : colors.to}
       gradientColor={colors.glow}
       gradientOpacity={reduced ? 0 : 0.35}
     >

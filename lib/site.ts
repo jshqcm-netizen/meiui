@@ -1,6 +1,6 @@
 export const site = {
   name: "qcm.dev",
-  version: "0.2",
+  version: "0.3",
   locale: "zh-CN",
   description: "关于 AI、工程与创造的开放笔记。一个持续生长的个人数字空间。",
   baseUrl: "https://qcm.dev",

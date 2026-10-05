@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "@fontsource-variable/manrope";
 import "./globals.css";
+import "./glass-theme.css";
+import { ThemeProvider } from "@/components/theme-provider";
 import { SiteShell, type SearchItem } from "@/components/site-shell";
 import { getSearchIndex } from "@/lib/content";
 import { site, apps } from "@/lib/site";
@@ -34,9 +36,11 @@ export default async function RootLayout({
     })),
   ];
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" suppressHydrationWarning>
       <body>
-        <SiteShell searchItems={searchItems}>{children}</SiteShell>
+        <ThemeProvider>
+          <SiteShell searchItems={searchItems}>{children}</SiteShell>
+        </ThemeProvider>
       </body>
     </html>
   );

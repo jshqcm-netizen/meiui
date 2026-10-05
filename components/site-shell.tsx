@@ -22,6 +22,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
+import { ThemeSwitch } from "@/components/theme-switch";
 import { SiteSearch } from "@/components/site-search";
 import type { SearchItem } from "@/lib/search";
 export type { SearchItem } from "@/lib/search";
@@ -186,7 +187,7 @@ export function SiteShell({
           <div className="topbar-actions">
             <SiteSearch items={searchItems} />
             <Separator orientation="vertical" className="topbar-divider" />
-            <span className="topbar-caption">Build something meaningful.</span>
+            <ThemeSwitch />
             <span className="top-avatar" aria-hidden="true">
               Q
             </span>
