@@ -24,6 +24,7 @@
   --radius-xl: 24px;
 }
 :root {
+  color-scheme: light;
   --background: #edf0f7;
   --foreground: #253048;
   --card: #f8faff;
@@ -3330,7 +3331,7 @@ main:focus {
 .app-glass [data-slot="card-description"] {
   font-size: 12px;
   margin-top: 5px;
-  color: #73809a;
+  color: var(--muted);
 }
 .app-glass [data-slot="card-content"] {
   margin-top: 12px;
@@ -3354,10 +3355,10 @@ main:focus {
   padding: 0;
   margin: 0;
   font-size: 11px;
-  color: #6e81a0;
+  color: var(--muted);
 }
 .app-open-label {
-  color: #6f81a0;
+  color: var(--muted);
   font-size: 11px;
   flex-shrink: 0;
 }

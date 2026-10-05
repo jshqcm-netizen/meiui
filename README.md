@@ -92,7 +92,7 @@ scripts/                    # 内容命令和本地预览
 npm run check
 ```
 
-可单独运行 `npm run typecheck`、`npm run lint`、`npm test`、`npm run content:check`。第二版共有 27 项单元测试。`npm run test:ui:list` 可检查浏览器测试发现，真正的浏览器验收需要执行 `npm run test:ui`；受限环境中不可把 list 的通过当成截图或交互通过。最后的静态文件验证见 `scripts/check-export.py`。
+可单独运行 `npm run typecheck`、`npm run lint`、`npm test`、`npm run content:check`。第二版共有 28 项单元测试。`npm run test:ui:list` 可检查浏览器测试发现，真正的浏览器验收需要执行 `npm run test:ui`；受限环境中不可把 list 的通过当成截图或交互通过。最后的静态文件验证见 `scripts/check-export.py`。
 
 ## Git 和下一阶段
 
