@@ -1,36 +1,23 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
-  BookOpen,
   FileText,
-  Layers3,
   Code2,
   ChevronRight,
   Clock3,
   Sparkles,
   Braces,
-  Compass,
 } from "lucide-react";
 import { getAllContent } from "@/lib/content";
 import { apps, formatDate, site } from "@/lib/site";
 import { AppCard } from "@/components/app-card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { buildDashboard } from "@/lib/dashboard";
+import { HomeLibrary, HomeTopicDock } from "@/components/home-library";
+import styles from "@/components/home-workspace.module.css";
 export default async function Home() {
-  const posts = await getAllContent("blog");
-  const docs = await getAllContent("docs");
-  const sampleCount = [...posts, ...docs].filter(
-    (entry) => entry.sample,
-  ).length;
-  const featured = posts.find((p) => p.featured) ?? posts[0];
+  const entries = await Promise.all([getAllContent("blog"), getAllContent("docs")]);
+  const { posts, docs, featured, sampleCount, topics } = buildDashboard(entries.flat());
   return (
     <div className="page home-page">
       <div className="page-heading">
@@ -49,90 +36,37 @@ export default async function Home() {
           本地预览版 <b>v{site.version}</b>
         </span>
       </div>
-      <div className="overview-grid">
-        <section className="feature-panel">
-          <div className="feature-content">
-            <span className="feature-label">
-              <span className="label-line" />
-              探索，不止于想法
-            </span>
-            <h2>
-              让探索，
-              <br />
-              有迹可循。
-            </h2>
-            <p>
-              写代码，做实验，整理一路上的发现。
-              <br />
+      <div className={styles.overview}>
+        <section className={styles.hero} aria-labelledby="home-feature-heading">
+          <div className={styles.heroCopy}>
+            <p className={styles.heroIntro}>探索，不止于想法</p>
+            <h2 id="home-feature-heading">让探索，<br />有迹可循。</h2>
+            <p className={styles.heroDescription}>
+              写代码，做实验，整理一路上的发现。<br />
               让每一个小小的开始，都有延续。
             </p>
-            <Button asChild variant="default">
-              <Link href={featured ? `/blog/${featured.slug}/` : "/blog/"}>
-                <BookOpen data-icon="inline-start" />
-                阅读精选手记
-              </Link>
-            </Button>
           </div>
-          <div className="hero-art" aria-hidden="true">
-            <Image
-              src="/media/cobalt-glass.webp"
-              alt=""
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 60vw"
-            />
+          <div className={styles.heroArt} aria-hidden="true">
+            <Image src="/media/cobalt-glass.webp" alt="" fill priority
+              sizes="(max-width: 1040px) 100vw, 60vw" />
           </div>
-          <span className="feature-corner">Ideas into things.</span>
+          <Link href={featured ? `/blog/${featured.slug}/` : "/blog/"}
+            className={styles.featured}
+            aria-label={featured ? `阅读精选手记：${featured.title}` : "浏览技术手记"}>
+            <div className={styles.featuredCopy}>
+              <div className={styles.featuredMeta}>
+                <span>精选手记</span>
+                {featured && <span>{featured.readingMinutes} 分钟阅读</span>}
+                {featured?.sample && <Badge variant="outline">示例</Badge>}
+              </div>
+              <h3 className={styles.featuredTitle}>{featured?.title ?? "从技术手记开始探索"}</h3>
+            </div>
+            <span className={styles.featuredAction}>阅读</span>
+          </Link>
         </section>
-        <Card className="notebook-panel">
-          <CardHeader>
-            <div className="section-card-heading">
-              <CardTitle>
-                <h2>空间一览</h2>
-              </CardTitle>
-              <Compass size={19} />
-            </div>
-            <CardDescription>从一个想法，到一份积累</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/blog/" className="notebook-stat">
-              <div className="stat-icon blue">
-                <BookOpen size={19} />
-              </div>
-              <div>
-                技术手记<span>实验、思考与实践</span>
-              </div>
-              <strong>{String(posts.length).padStart(2, "0")}</strong>
-            </Link>
-            <Link href="/docs/" className="notebook-stat">
-              <div className="stat-icon peach">
-                <FileText size={19} />
-              </div>
-              <div>
-                知识文档<span>可复用的步骤与方法</span>
-              </div>
-              <strong>{String(docs.length).padStart(2, "0")}</strong>
-            </Link>
-            <Link href="/apps/" className="notebook-stat">
-              <div className="stat-icon green">
-                <Layers3 size={19} />
-              </div>
-              <div>
-                应用规划<span>留给下一次构建</span>
-              </div>
-              <strong>{String(apps.length).padStart(2, "0")}</strong>
-            </Link>
-          </CardContent>
-          <CardFooter>
-            <div className="notebook-foot">
-              <span className="tiny-dot" />
-              {sampleCount
-                ? `${sampleCount} 篇示例内容，供结构与阅读演示`
-                : "阅读公开手记与文档"}
-            </div>
-          </CardFooter>
-        </Card>
+        <HomeLibrary posts={posts} docs={docs} sampleCount={sampleCount} />
       </div>
+      <HomeTopicDock topics={topics} />
       <section className="home-section">
         <div className="section-heading">
           <div>
@@ -172,7 +106,7 @@ export default async function Home() {
                 <div className="recent-copy">
                   <div className="recent-title">
                     <h3>{post.title}</h3>
-                    <span className="sample-label">示例</span>
+                    {post.sample && <Badge variant="outline">示例</Badge>}
                   </div>
                   <p>{post.description}</p>
                   <div className="recent-meta">

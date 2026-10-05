@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { apps } from "@/lib/site";
 import { AppCard } from "@/components/app-card";
-import { Layers3 } from "lucide-react";
+import { AppDomainMap, AppPlanningFaq } from "@/components/app-workspace";
+import styles from "@/components/app-workspace.module.css";
 export const metadata: Metadata = { title: "应用空间" };
 export default function Apps() {
   return (
@@ -14,20 +15,24 @@ export default function Apps() {
         </div>
         <span className="edition-pill">{apps.length} 个规划入口</span>
       </div>
-      <div className="apps-grid apps-page-grid">
-        {apps.map((a) => (
-          <AppCard key={a.slug} app={a} />
-        ))}
+      <div className={styles.workspacePanels}>
+        <AppDomainMap />
+        <AppPlanningFaq />
       </div>
-      <div className="planning-notice">
-        <Layers3 size={22} />
-        <div>
-          <h2>这里展示的是应用规划</h2>
-          <p>
-            这些子域名尚未连接或部署。当前卡片打开本地介绍页；等应用准备好，再将入口切换到真实地址。
-          </p>
+      <section aria-labelledby="app-plans-title">
+        <div className={styles.appsHeading}>
+          <div>
+            <h2 id="app-plans-title">找到想继续的方向</h2>
+            <p>每张卡片都有独立的规划说明</p>
+          </div>
+          <span>规划中，尚未部署</span>
         </div>
-      </div>
+        <div className="apps-grid">
+          {apps.map((a) => (
+            <AppCard key={a.slug} app={a} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
