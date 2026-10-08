@@ -2,7 +2,7 @@
 
 一个中文优先、公开阅读导向的个人技术主站：磨砂玻璃仪表盘、技术手记、知识文档，以及未来子应用的统一入口。
 
-**当前交付：qcm.dev 网站源代码。指定 GitHub 仓库：https://github.com/jshqcm-netizen/meiui 。没有部署网站、绑定域名、创建账户或配置后台。** 随附内容明确标注为示例。站点保留 `noindex` 与禁止索引的 robots.txt，直到正式发布审核。
+**当前交付：qcm.dev 网站源代码及 GitHub Pages 发布配置。指定 GitHub 仓库：https://github.com/jshqcm-netizen/meiui 。默认预览目标：https://jshqcm-netizen.github.io/meiui/ 。实际上线状态以 Actions 部署结果为准；没有绑定自定义域名、创建账户或配置后台。** 随附内容明确标注为示例。站点保留 `noindex` 与禁止索引的 robots.txt，直到正式发布审核。
 
 ## 快速开始
 
@@ -106,7 +106,7 @@ npm run check
 3. 选定托管方案并明确授权发布，配置 qcm.dev、HTTPS 与安全响应头
 4. 之后再独立设计 AI 应用、后台身份验证、授权/审计和存储
 
-没有 OAuth、GitHub 自动发布、生产 CMS、后台登录、模型调用、支付或自动运行智能体。后续应用的功能、数据范围、凭据与费用需要单独确认。
+已配置 GitHub Actions 自动发布到 Pages。没有 OAuth、生产 CMS、后台登录、模型调用、支付或自动运行智能体。后续应用的功能、数据范围、凭据与费用需要单独确认。
 
 ## 安全说明
 
