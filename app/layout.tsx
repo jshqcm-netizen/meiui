@@ -1,3 +1,4 @@
+import { withBasePath } from "@/lib/paths";
 import type { Metadata } from "next";
 import "@fontsource-variable/manrope";
 import "./globals.css";
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
   title: { default: "qcm.dev · 探索，构建，分享", template: "%s · qcm.dev" },
   description: site.description,
   robots: { index: false, follow: false },
-  icons: { icon: "/icon.svg" },
+  icons: { icon: withBasePath("/icon.svg") },
   openGraph: {
     title: "qcm.dev",
     description: site.description,
@@ -37,7 +38,7 @@ export default async function RootLayout({
   ];
   return (
     <html lang="zh-CN" suppressHydrationWarning>
-      <body>
+      <body style={{ "--cobalt-backdrop": `url("${withBasePath("/media/cobalt-glass.webp")}")`, "--studio-backdrop": `url("${withBasePath("/media/frosted-studio.webp")}")` } as React.CSSProperties}>
         <ThemeProvider>
           <SiteShell searchItems={searchItems}>{children}</SiteShell>
         </ThemeProvider>

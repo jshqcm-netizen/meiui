@@ -1,3 +1,4 @@
+import { withBasePath, prefixContentHtml } from "@/lib/paths";
 import Link from "next/link";
 import { ChevronLeft, Clock3, CalendarDays, FileCode2 } from "lucide-react";
 import type { ContentEntry } from "@/lib/content-types";
@@ -64,7 +65,7 @@ export function Article({
               这是一篇用于展示结构与阅读体验的示例内容，发布前请替换或审阅。
             </div>
           )}
-          <ArticleBody html={prepareReadingHtml(entry.html)} />
+          <ArticleBody html={prepareReadingHtml(prefixContentHtml(entry.html))} />
           {entry.videos?.length ? (
             <section className="article-videos" aria-label="视频示例">
               <h2>视频演示</h2>
@@ -74,12 +75,12 @@ export function Article({
                   <video
                     controls
                     preload="metadata"
-                    poster={video.poster}
+                    poster={video.poster ? withBasePath(video.poster) : undefined}
                     aria-label={video.title}
                     playsInline
                   >
                     <source
-                      src={video.src}
+                      src={withBasePath(video.src)}
                       type={
                         video.src.endsWith(".webm") ? "video/webm" : "video/mp4"
                       }
@@ -87,7 +88,7 @@ export function Article({
                     {video.captions && (
                       <track
                         kind="captions"
-                        src={video.captions}
+                        src={withBasePath(video.captions)}
                         srcLang="zh"
                         label="中文字幕"
                         default

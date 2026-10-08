@@ -2,7 +2,8 @@
 from pathlib import Path
 from html.parser import HTMLParser
 from urllib.parse import urlsplit, unquote
-import re
+import re, os
+base=os.environ.get("NEXT_PUBLIC_BASE_PATH", "")
 root=Path('out')
 assert root.is_dir(), 'Run npm run build first'
 class Page(HTMLParser):
@@ -12,7 +13,7 @@ class Page(HTMLParser):
   if 'id' in a:self.ids.add(a['id'])
   if tag=='a' and a.get('href'):self.links.append(a['href'])
   if tag in ['script','img','source','track'] and a.get('src'):self.assets.append(a['src'])
-  if tag=='link' and a.get('href'):self.assets.append(a['href'])
+  if tag=='link' and a.get('href') and a.get('rel') not in ['preconnect','dns-prefetch']:self.assets.append(a['href'])
   if tag=='video':
    self.videos+=1
    if a.get('poster'):self.assets.append(a['poster'])
@@ -25,7 +26,9 @@ for file in pages:
   if not parts.path:
    if parts.fragment and unquote(parts.fragment) not in parser.ids:errors.append(f'{file}: missing anchor {href}')
    continue
-  target=root/unquote(parts.path.lstrip('/'))
+  if base and not parts.path.startswith(base+'/'):
+   errors.append(f'{file}: path escapes deployment prefix {href}');continue
+  target=root/unquote(parts.path[len(base):].lstrip('/'))
   if target.is_dir():target=target/'index.html'
   if not target.exists():errors.append(f'{file}: missing target {href}')
  if re.search(r'(sk-[A-Za-z0-9]{30,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN (RSA )?PRIVATE KEY-----)',html):errors.append(f'{file}: possible secret')
@@ -37,13 +40,13 @@ for kind, card_class in [('blog', 'article-card'), ('docs', 'doc-card')]:
  html=(root/kind/'index.html').read_text()
  assert card_class in html, f'{kind}: missing server-rendered collection fallback'
  parser=Page();parser.feed(html)
- expected=[f'/{kind}/{file.stem}/' for file in Path('content',kind).glob('*.md') if 'status: published' in file.read_text()]
+ expected=[f'{base}/{kind}/{file.stem}/' for file in Path('content',kind).glob('*.md') if 'status: published' in file.read_text()]
  assert all(href in parser.links for href in expected), f'{kind}: public entries missing in initial HTML'
 for path in ['index.html','apps/index.html','blog/index.html','docs/index.html']:
  html=(root/path).read_text()
  assert '浅色主题' in html and '深色主题' in html, f'{path}: named theme controls missing'
 parser=Page();parser.feed((root/'apps/index.html').read_text())
 assert not any(urlsplit(link).hostname in ['ai.qcm.dev','agents.qcm.dev','admin.qcm.dev'] for link in parser.links), 'Planned domain linked as live'
-assert all(f'/apps/{slug}/' in parser.links for slug in ['ai','agents','admin']), 'Missing local planning destination'
+assert all(f'{base}/apps/{slug}/' in parser.links for slug in ['ai','agents','admin']), 'Missing local planning destination'
 assert (root/'media/frosted-studio.webp').is_file(), 'Missing original glass backdrop'
 print('PASS: server-rendered collection destinations, named appearance controls, local-only app planning links, and backdrop asset.')

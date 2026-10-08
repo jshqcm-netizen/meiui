@@ -3,7 +3,7 @@ export const site = {
   version: "0.3",
   locale: "zh-CN",
   description: "关于 AI、工程与创造的开放笔记。一个持续生长的个人数字空间。",
-  baseUrl: "https://qcm.dev",
+  baseUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://qcm.dev",
 };
 export type AppEntry = {
   slug: string;

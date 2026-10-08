@@ -505,7 +505,7 @@ main:focus {
 .hero-art {
   position: absolute;
   inset: 0;
-  background-image: url("/media/cobalt-glass.webp");
+  background-image: var(--cobalt-backdrop);
   background-size: cover;
   background-position: center;
   z-index: -1;

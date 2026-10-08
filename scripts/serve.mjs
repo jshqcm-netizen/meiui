@@ -3,6 +3,7 @@ import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 const root = path.resolve("out");
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const mime = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -27,9 +28,18 @@ const server = createServer(async (req, res) => {
       res.end();
       return;
     }
-    const pathname = decodeURIComponent(
+    let pathname = decodeURIComponent(
       new URL(req.url ?? "/", "http://localhost").pathname,
     );
+    if (basePath) {
+      if (pathname === basePath) {
+        res.writeHead(308, { Location: `${basePath}/` }); res.end(); return;
+      }
+      if (!pathname.startsWith(`${basePath}/`)) {
+        res.writeHead(404); res.end("Not found"); return;
+      }
+      pathname = pathname.slice(basePath.length);
+    }
     let target = path.resolve(root, `.${pathname}`);
     const relative = path.relative(root, target);
     if (

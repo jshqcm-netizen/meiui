@@ -1,3 +1,4 @@
+import { withBasePath } from "@/lib/paths";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -47,7 +48,7 @@ export default async function Home() {
             </p>
           </div>
           <div className={styles.heroArt} aria-hidden="true">
-            <Image src="/media/cobalt-glass.webp" alt="" fill priority
+            <Image src={withBasePath("/media/cobalt-glass.webp")} alt="" fill priority
               sizes="(max-width: 1040px) 100vw, 60vw" />
           </div>
           <Link href={featured ? `/blog/${featured.slug}/` : "/blog/"}
